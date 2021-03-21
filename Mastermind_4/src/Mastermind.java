@@ -1,4 +1,4 @@
-//import necessary classes 
+//import necessary classes to program 
 import java.util.Random;
 import java.util.Arrays;
 
@@ -19,7 +19,7 @@ public class Mastermind {
 		}//for i	
 	}//mastermind constructor
 	
-	//method to reorganize the graph with all the valid solutions at the beginning
+	//method to reorganize the array with all the valid solutions at the beginning 
 	void compactArray() {
 		int lastValidSolution = -1;									//stores
 		for(int i = 0; i <= validSolutions - 1; i++) {
