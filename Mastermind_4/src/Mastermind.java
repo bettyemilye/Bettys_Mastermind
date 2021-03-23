@@ -3,11 +3,12 @@ import java.util.Random;
 import java.util.Arrays;
 
 public class Mastermind {
-	int n = 5;														//number of 'rows' in the allSolutions array
+	int n = 9999;														//number of 'rows' in the allSolutions array
 	int validSolutions = n + 1;										//the number of valid solutions in allSolutions
 	int[][] allSolutions = new int[validSolutions][4];				//the array where every possible solution will be stored
 	private static final int INVALID_SOLUTION = -1;
 	int[] guess = new int[4];
+	double checkScore;
 	
 	//constructor to fill the allSolutions array with every possible solution
 	Mastermind() {
@@ -49,102 +50,49 @@ public class Mastermind {
 	}
 
 	//method to mark invalid solutions
-	boolean eliminateBadGuesses(double score) {
-		
-		boolean debug = true;
-		
-		double checkScore = 0.0;							//in checkScore i will store the score of the guess i'm checking
-		int[] checkSolution = new int[4];					//in the check array i will store the 4 digits of the guess i'm checking
-		
-		//is the game over
-		if (score == 4.0) {
-			//return true because the game is over
-			
-			/* BETTY - I'M NOT REALLY SURE YOU SHOULD BE DOING THIS
-			 * IT SEEMS TO ME THAT THIS METHOD SHOULD PROCESS ALL
-			 * THE GUESSES JUST THE SAME AS IT WOULD WITH ANY OTHER
-			 * GUESS. THE ONLY THINGS THAT IS REALLY SPECIAL ABOUT
-			 * A SCORE OF 4.0 IS THAT ONLY ONE SOLUTION IN THE ALL
-			 * SOLUTIONS ARRAY
-			 * 
-			 * PROBABLY THIS METHOD SHOIULD NEVER BE CALLED WITH
-			 * A SCORE OF 4.0. THE CALLING METHOD SHOULD HAVE
-			 * REALIZED THAT THE GAME WAS OVER
-			 * 
-			 * THIS JUST FEELS WRONG
-			 * 
-			 */
-			
-			return true;
-			
-		} else {
-			//for i loop goes through every valid solution
-			for (int i = 0; i < validSolutions; i++) {
-				
-				
-				checkSolution = Arrays.copyOf(allSolutions[i], 4);
-				
-				System.out.println("\nGuess        : " + this.guess[0] + this.guess[1] + this.guess[2] + this.guess[3]);
-				System.out.println("checkSolution: " + checkSolution[0] + checkSolution[1] + checkSolution[2] + checkSolution[3]+"\n");
-
-				//reset checkScore
-				checkScore = 0;
-				//for j loop goes through each digit in the guess
-				for (int j = 0; j <= 3; j++) {	
-					
-					//System.out.println("i = " + i + ", j = " + j);
-					
-					//for k loop goes through each digit of the solution being checked
-					for (int k = 0; k <= 3; k++) {
-						
-						if (debug) System.out.print("guess" + j + " -> checkSolution" + k + " ; comparing the " + guess[j] + " in 'guess' to " + checkSolution[k] + " in 'checkSolution'");
-
-						//System.out.print("k = " + k + " ");
-						
-						if(guess[j] == checkSolution[k]) {
-							//digit is in both the guess and the possible solution
-							if (debug) System.out.print(" digits match ; ");
-							if (j == k) {
-								//digit is in correct position
-								
-								/*
-								 * checkScore is a double
-								 * why are you adding 10s and 1s
-								 * why not 1s and 0.1s
-								 */
-								checkScore += 10;
-								if (debug) System.out.print(" in correct position; checkScore = " + checkScore + " ; now processing next digit of guess");
-								
-							} else {
-								//digit is in wrong position
-								checkScore += 1;
-								if (debug) System.out.print(" in wrong position; checkScore = " + checkScore);
-							}//else if 
-							checkSolution[k] = -1;
-						}//outside if
-						
-						if (debug) System.out.print("\n");
-						
-						//System.out.println("\ni = " + i + ", j = " + j + ", k = " + k + ", cs = " + checkScore + "\n");
-						
-					}//for k
-					
-				}//for j
-				
-				//System.out.println("checkScore = " + checkScore/10);
-				if (score == checkScore/10) {
-					//System.out.println("Possible");
-				}
-
-			}//for i
-			
-		}//else
-		
-		//return false because the game isn't over
-		return false;
+	void eliminateBadGuesses(double score) {
+		double checkScore;
+		//loop to go through every possible solution in the allSolutions array
+		for (int i = 0; i <= validSolutions; i++) {
+			//score the possible solution against the guess
+			checkScore = scoreSolution(allSolutions[i], guess);
+			//are the scores the same
+			if (checkScore != score) {
+				allSolutions[i][0] = -1;
+			}//if
+		}//for i
 	}//eliminateBadGuesses method
 	
-	
-	
+	//method to score a single solution against the guess
+	double scoreSolution(int[] solution, int[] guess) {
+		boolean[] usedSolution = {false, false, false, false};
+		boolean[] usedGuess = {false, false, false, false};
+		double checkScore = 0;
+		
+		//are any digits the same in the same placement
+		for (int i = 0; i <= 3; i++) {
+			if (solution[i] == guess[i] && usedSolution[i] == false) {
+				usedSolution[i] = true;
+				usedGuess[i] = true;
+				checkScore += 10;
+			}//if
+		}//for i
+		
+		//are any digits the same in different placement
+		for (int i = 0; i <= 3; i++) {
+			for (int j = 0; j <= 3; j++) {
+				if (solution[i] == guess[j] && usedSolution[i] == false && usedGuess[j] == false) {
+					usedSolution[i] = true;
+					usedGuess[j] = true;
+					checkScore += 1;
+					break;
+				}//if
+			}//for j
+		}//for i
+		//return the score
+		return checkScore/10;
+	}//scoreSolution method
 
 }//mastermind class
+
+

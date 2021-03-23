@@ -7,14 +7,7 @@ public class Main {
 		game.compactArray();
 		game.getGuess();
 		
-		//System.out.println("Guess: " + game.guess[0] + game.guess[1] + game.guess[2] + game.guess[3]);
-		
 		double score = 3.0;
-		boolean gameOver = game.eliminateBadGuesses(score);
-		
-		if (gameOver == true) {
-			System.out.println(" Winner!!");
-		}
 		
 	}//main method
 
